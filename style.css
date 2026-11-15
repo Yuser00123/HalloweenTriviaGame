@@ -7,3 +7,27 @@ body{
     text-align: center;
 }
 
+#overlay{
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFA756;
+    background-image: radial-gradient(#6b3b25 3px, transparent 3px);
+    background-size: 100px 100px;
+    background-image: radial-gradient(#6b3b25 3px, transparent 3px);
+    background-size: 30px 30px;
+}
+
+#makeBetter{
+    max-width: 500px;
+    margin: 20px;
+    padding: 40px;
+    border-radius: 15px;
+    background-color: #FFF3D6;
+    text-align: center;
+    font-size: 1.2rem;
+    white-space: pre-line;
+}
