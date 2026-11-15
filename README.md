@@ -1,8 +1,8 @@
 # HALLOWEEN TRIVIA GAME
 
-It is a remake of project [here](https://github.com/faaezah/HalloweenTriviaGame). It has 15 quetions with 5 easy, medium and hard. It has jumpscares also.
+It is a remake of project [faaezah/HalloweenTriviaGame](https://github.com/faaezah/HalloweenTriviaGame). It has 15 quetions with 5 easy, medium and hard. It has jumpscares also.
 
-![screenshot]()
+![screenshot](https://cdn.hackclub.com/01a1df4d-9b18-7336-9afd-8af8f7ff72a7/8a29fc5f-5823-46cd-840b-b510310b1e39.png)
 
 ## HOW TO PLAY
 
