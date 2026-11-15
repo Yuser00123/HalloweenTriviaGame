@@ -24,7 +24,13 @@ const hard_questions = {
 
 let overlay = document.getElementById("overlay");
 var user_score = 0;
-let msg = document.getElementById("hallMsg");
+let username = "player";
+let msg = document.getElementById("makeBetter");
+
+function generate_certificate(name, score){
+    let url = `https://halloween-certificate-api.vercel.app/certificate?name=${name}&score=${score}&format=jpg`;
+    window.location.href = url;
+}
 
 function quitGame(name){
     alert(`Your final score is ${user_score}.`)
@@ -34,20 +40,38 @@ function quitGame(name){
 
 }
 
-function showJumpScare(level){
+async function showJumpScare(level){
+    let wentHidden = false;
+
+const returnPromise = new Promise(resolve => {
+    function checkTab() {
+        if (document.hidden) {
+            wentHidden = true;
+        }
+
+        if (wentHidden && !document.hidden) {
+            document.removeEventListener("visibilitychange", checkTab);
+            resolve();
+        }
+    }
+
+    document.addEventListener("visibilitychange", checkTab);
+});
+
     if (level === 1){
         alert("You will be redirected to a jumpscare video. Please come to this tab after you saw jumpscare.");
-        window.open("jumpscare1.html");
+        window.open("jumpscare1.html", "_blank");
     } else if (level === 2){
         alert("Warning: This is scary jumpscare and very intense. You will be redirected to a jumpscare video. Please come to this tab after you saw the jumpscare.");
-        window.open("jumpscare2.html");
+        window.open("jumpscare2.html", "_blank");
     } else if (level === 3){
         alert("WARNING: THIS IS VERY SCARY AND INTENSE JUMPSCARE. You will be redirected to a jumpscare video, which is very scary. Please come to this tab after watching it.")
-        window.open("jumpscare3.html");
+        window.open("jumpscare3.html", "_blank");
     }
+    await returnPromise;
 }
 
-function get_questions(level, username, jumpscare_level){
+async function get_questions(level, username, jumpscare_level){
     for (let i = 0; i < 5; i++) {
         let question = Object.keys(level)[i];
         let answer = prompt(question);
@@ -71,7 +95,7 @@ function get_questions(level, username, jumpscare_level){
                 }
             } while (options_choosed !== "1" && options_choosed !== "2");
             if (options_choosed == 1){
-                showJumpScare(jumpscare_level);
+                await showJumpScare(jumpscare_level);
                 continue;
             } else if (options_choosed == 2){
                 quitGame(username);
@@ -82,15 +106,15 @@ function get_questions(level, username, jumpscare_level){
     return true;
 }
 
-function startGame(){
-    const username = prompt("Enter your name:") || "player";
+async function startGame(){
+    username = prompt("Enter your name:") || "player";
     alert(`Welcome ${username} to the Unexpected Halloween Quiz! You will be asked 15 questions total.`)
     alert("First round. 5 easy questions.")
-    if (!get_questions(easy_questions, username, 1)) return;
+    if (!await get_questions(easy_questions, username, 1)) return;
 
     alert("You survived the first round! You are brave and intelligent. Now second round, 5 medium questions.")
-    if (!get_questions(medium_questions, username, 2)) return;
+    if (!await get_questions(medium_questions, username, 2)) return;
 
     alert("You survived the second round! Great job! Now the third and the last round, 5 hard questions.")
-    get_questions(hard_questions, username, 3);
+    await get_questions(hard_questions, username, 3);
 }
