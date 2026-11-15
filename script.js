@@ -31,13 +31,20 @@ function quitGame(name){
     overlay.style.display = "flex";
 }
 
-function showJumpScare(){
-    //Dsiplay jumpscare video
+function showJumpScare(level){
+    if (level === 1){
+        alert("You will be redirected to a jumpscare video. Please come to this tab after you saw jumpscare.");
+        window.open("jumpscare1.html");
+    } else if (level === 2){
+        alert("You will be redirected to a jumpscare video. Please come to this tab after you saw the jumpscare.");
+        window.open("jumpscare2.html");
+    }
 }
 
 function startGame(){
     const username = prompt("Enter your name:");
     alert(`Welcome ${username} to the Unexpected Halloween Quiz! You will be asked 15 questions total.`)
+    alert("First round. 5 easy questions.")
     for (let i = 0; i < 5; i++) {
         let question = Object.keys(easy_questions)[i];
         let answer = prompt(question).toLocaleLowerCase();
@@ -46,14 +53,20 @@ function startGame(){
             user_score++;
         } else if (answer === "quit") {
             quitGame(username);
+            break;
         } else {
             let options_choosed = prompt("Your answer is incorrect.. You have two options - 1) See a jumpscare o continue or 2) Quit here. Type 1 or 2 to choose.")
             if (options_choosed == 1){
-                showJumpScare();
+                showJumpScare(1);
                 continue;
             } else if (options_choosed == 2){
                 quitGame(username);
+                break;
+            } else {
+                alert("Invalid option. Restart quiz...")
+                break;
             }
         }
     }
+
 }
