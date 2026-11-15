@@ -47,37 +47,46 @@ function showJumpScare(level){
 function get_questions(level, username, jumpscare_level){
     for (let i = 0; i < 5; i++) {
         let question = Object.keys(level)[i];
-        let answer = prompt(question).toLocaleLowerCase();
+        let answer = prompt(question);
+        if (answer === null || answer.trim().toLocaleLowerCase() === "quit") {
+            quitGame(username);
+            return false;
+        }
+        answer = answer.trim().toLocaleLowerCase();
         if (answer === level[question]){
             alert("Your answer is correct! You got a point!")
             user_score++;
-        } else if (answer === "quit") {
-            quitGame(username);
-            break;
         } else {
-            let options_choosed = prompt("Your answer is incorrect.. You have two options - 1) See a jumpscare o continue or 2) Quit here. Type 1 or 2 to choose.")
+            let options_choosed;
+            do {
+                options_choosed = prompt("Your answer is incorrect. You have two options - 1) See a jumpscare o continue or 2) Quit here. Type 1 or 2 to choose.");
+                if (options_choosed === null) {
+                    options_choosed = "2";
+                }
+                if (options_choosed !== "1" && options_choosed !== "2") {
+                    alert("Invalid option. Please type 1 or 2.");
+                }
+            } while (options_choosed !== "1" && options_choosed !== "2");
             if (options_choosed == 1){
                 showJumpScare(jumpscare_level);
                 continue;
             } else if (options_choosed == 2){
                 quitGame(username);
-                break;
-            } else {
-                alert("Invalid option. Restart quiz...")
-                break;
+                return false;
             }
         }
     }
+    return true;
 }
 
 function startGame(){
-    const username = prompt("Enter your name:");
+    const username = prompt("Enter your name:") || "player";
     alert(`Welcome ${username} to the Unexpected Halloween Quiz! You will be asked 15 questions total.`)
     alert("First round. 5 easy questions.")
-    get_questions(easy_questions, username, 1);
+    if (!get_questions(easy_questions, username, 1)) return;
 
     alert("You survived the first round! You are brave and intelligent. Now second round, 5 medium questions.")
-    get_questions(medium_questions, username, 2);
+    if (!get_questions(medium_questions, username, 2)) return;
 
     alert("You survived the second round! Great job! Now the third and the last round, 5 hard questions.")
     get_questions(hard_questions, username, 3);
