@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+
 body{
+    font-family: 'Creepster', system-ui;
+    font-weight: 300;
+    font-style: normal;
     max-width: 700px;
     margin: 100px auto;
     padding: 50px;
