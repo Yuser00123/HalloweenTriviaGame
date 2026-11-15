@@ -24,11 +24,14 @@ const hard_questions = {
 
 let overlay = document.getElementById("overlay");
 var user_score = 0;
+let msg = document.getElementById("hallMsg");
 
 function quitGame(name){
     alert(`Your final score is ${user_score}.`)
     alert(`Thanks for playing, ${name}! Byeee...`);
     overlay.style.display = "flex";
+    msg.innerHTML = `Hi ${name}, thanks for attending the Halloween quiz. Your final score is ${user_score}. Hope you liked it.`
+
 }
 
 function showJumpScare(level){
@@ -59,7 +62,7 @@ function get_questions(level, username, jumpscare_level){
         } else {
             let options_choosed;
             do {
-                options_choosed = prompt("Your answer is incorrect. You have two options - 1) See a jumpscare o continue or 2) Quit here. Type 1 or 2 to choose.");
+                options_choosed = prompt(`Your answer is incorrect. The correct answer was ${level[question]}. You have two options - 1) See a jumpscare o continue or 2) Quit here. Type 1 or 2 to choose.`);
                 if (options_choosed === null) {
                     options_choosed = "2";
                 }
@@ -90,6 +93,4 @@ function startGame(){
 
     alert("You survived the second round! Great job! Now the third and the last round, 5 hard questions.")
     get_questions(hard_questions, username, 3);
-
-
 }
