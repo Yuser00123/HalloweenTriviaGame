@@ -36,19 +36,19 @@ function showJumpScare(level){
         alert("You will be redirected to a jumpscare video. Please come to this tab after you saw jumpscare.");
         window.open("jumpscare1.html");
     } else if (level === 2){
-        alert("You will be redirected to a jumpscare video. Please come to this tab after you saw the jumpscare.");
+        alert("Warning: This is scary jumpscare and very intense. You will be redirected to a jumpscare video. Please come to this tab after you saw the jumpscare.");
         window.open("jumpscare2.html");
+    } else if (level === 3){
+        alert("WARNING: THIS IS VERY SCARY AND INTENSE JUMPSCARE. You will be redirected to a jumpscare video, which is very scary. Please come to this tab after watching it.")
+        window.open("jumpscare3.html");
     }
 }
 
-function startGame(){
-    const username = prompt("Enter your name:");
-    alert(`Welcome ${username} to the Unexpected Halloween Quiz! You will be asked 15 questions total.`)
-    alert("First round. 5 easy questions.")
+function get_questions(level, username, jumpscare_level){
     for (let i = 0; i < 5; i++) {
-        let question = Object.keys(easy_questions)[i];
+        let question = Object.keys(level)[i];
         let answer = prompt(question).toLocaleLowerCase();
-        if (answer === easy_questions[question]){
+        if (answer === level[question]){
             alert("Your answer is correct! You got a point!")
             user_score++;
         } else if (answer === "quit") {
@@ -57,7 +57,7 @@ function startGame(){
         } else {
             let options_choosed = prompt("Your answer is incorrect.. You have two options - 1) See a jumpscare o continue or 2) Quit here. Type 1 or 2 to choose.")
             if (options_choosed == 1){
-                showJumpScare(1);
+                showJumpScare(jumpscare_level);
                 continue;
             } else if (options_choosed == 2){
                 quitGame(username);
@@ -68,5 +68,19 @@ function startGame(){
             }
         }
     }
+}
+
+function startGame(){
+    const username = prompt("Enter your name:");
+    alert(`Welcome ${username} to the Unexpected Halloween Quiz! You will be asked 15 questions total.`)
+    alert("First round. 5 easy questions.")
+    get_questions(easy_questions, username, 1);
+
+    alert("You survived the first round! You are brave and intelligent. Now second round, 5 medium questions.")
+    get_questions(medium_questions, username, 2);
+
+    alert("You survived the second round! Great job! Now the third and the last round, 5 hard questions.")
+    get_questions(hard_questions, username, 3);
+
 
 }
