@@ -26,7 +26,23 @@ let overlay = document.getElementById("overlay");
 var user_score = 0;
 var display_score = 0;
 let username = "player";
+let gameStarted = false;
 let msg = document.getElementById("makeBetter");
+
+const progressKey = "halloweenQuizProgress";
+
+function saveProgress(round, questionIndex) {
+    sessionStorage.setItem(progressKey, JSON.stringify({
+        round,
+        questionIndex,
+        username,
+        user_score
+    }));
+}
+
+function clearProgress() {
+    sessionStorage.removeItem(progressKey);
+}
 
 function generate_certificate(name, score){
     let url = `https://halloween-certificate-api.vercel.app/certificate?name=${name}&score=${score}&format=jpg`;
@@ -34,6 +50,7 @@ function generate_certificate(name, score){
 }
 
 function quitGame(name){
+    clearProgress();
     alert(`Your final score is ${user_score}.`)
     alert(`Thanks for playing, ${name}! Byeee...`);
     overlay.style.display = "flex";
@@ -74,11 +91,14 @@ const returnPromise = new Promise(resolve => {
     await returnPromise;
 }
 
-async function get_questions(level, username, jumpscare_level){
-    for (let i = 0; i < 5; i++) {
+async function get_questions(level, username, jumpscare_level, startIndex = 0){
+    for (let i = startIndex; i < 5; i++) {
         let question = Object.keys(level)[i];
-        let answer = prompt(question);
-        if (answer === null || answer.trim().toLocaleLowerCase() === "quit") {
+        let answer;
+        do {
+            answer = prompt(question);
+        } while (answer === null);
+        if (answer.trim().toLocaleLowerCase() === "quit") {
             quitGame(username);
             return false;
         }
@@ -86,18 +106,18 @@ async function get_questions(level, username, jumpscare_level){
         if (answer === level[question]){
             alert("Your answer is correct! You got a point!")
             user_score++;
+            saveProgress(jumpscare_level, i + 1);
         } else {
             let options_choosed;
             do {
                 options_choosed = prompt(`Your answer is incorrect. The correct answer was ${level[question]}. You have two options - 1) See a jumpscare to continue or 2) Quit here. Type 1 or 2 to choose.`);
-                if (options_choosed === null) {
-                    options_choosed = "2";
-                }
+                if (options_choosed === null) continue;
                 if (options_choosed !== "1" && options_choosed !== "2") {
                     alert("Invalid option. Please type 1 or 2.");
                 }
             } while (options_choosed !== "1" && options_choosed !== "2");
             if (options_choosed == 1){
+                saveProgress(jumpscare_level, i + 1);
                 await showJumpScare(jumpscare_level);
                 continue;
             } else if (options_choosed == 2){
@@ -110,14 +130,71 @@ async function get_questions(level, username, jumpscare_level){
 }
 
 async function startGame(){
+    if (gameStarted) return;
+    gameStarted = true;
+    const startButton = document.getElementById("start");
+    if (startButton) startButton.disabled = true;
+
+    let saved = null;
+    try {
+        saved = JSON.parse(sessionStorage.getItem(progressKey));
+    } catch (error) {}
+
+    if (saved) {
+        username = saved.username;
+        user_score = saved.user_score;
+
+        if (saved.round === 1) {
+            if (!await get_questions(easy_questions, username, 1, saved.questionIndex)) {
+                if (startButton) startButton.disabled = false;
+                gameStarted = false;
+                return;
+            }
+        }
+        if (saved.round === 1 || saved.round === 2) {
+            if (saved.round === 1) saved = { round: 2, questionIndex: 0, username, user_score };
+            if (!await get_questions(medium_questions, username, 2, saved.questionIndex)) {
+                if (startButton) startButton.disabled = false;
+                gameStarted = false;
+                return;
+            }
+        }
+        if (saved.round <= 3) {
+            await get_questions(hard_questions, username, 3, saved.round === 3 ? saved.questionIndex : 0);
+        }
+        clearProgress();
+        if (startButton) startButton.disabled = false;
+        gameStarted = false;
+        return;
+    }
+
     username = prompt("Enter your name:") || "player";
     alert(`Welcome ${username} to the Unexpected Halloween Quiz! You will be asked 15 questions total.`)
     alert("First round. 5 easy questions.")
-    if (!await get_questions(easy_questions, username, 1)) return;
+    if (!await get_questions(easy_questions, username, 1)) {
+        if (startButton) startButton.disabled = false;
+        gameStarted = false;
+        return;
+    }
 
     alert("You survived the first round! You are brave and intelligent. Now second round, 5 medium questions.")
-    if (!await get_questions(medium_questions, username, 2)) return;
+    if (!await get_questions(medium_questions, username, 2)) {
+        if (startButton) startButton.disabled = false;
+        gameStarted = false;
+        return;
+    }
 
     alert("You survived the second round! Great job! Now the third and the last round, 5 hard questions.")
     await get_questions(hard_questions, username, 3);
+    clearProgress();
+    if (startButton) startButton.disabled = false;
+    gameStarted = false;
 }
+
+window.addEventListener("load", () => {
+    if (sessionStorage.getItem(progressKey)) startGame();
+});
+
+window.addEventListener("load", () => {
+    if (sessionStorage.getItem(progressKey)) startGame();
+});
