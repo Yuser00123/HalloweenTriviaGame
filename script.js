@@ -24,6 +24,7 @@ const hard_questions = {
 
 let overlay = document.getElementById("overlay");
 var user_score = 0;
+var display_score = 0;
 let username = "player";
 let msg = document.getElementById("makeBetter");
 
@@ -37,6 +38,8 @@ function quitGame(name){
     alert(`Thanks for playing, ${name}! Byeee...`);
     overlay.style.display = "flex";
     msg.innerHTML = `Hi ${name}, thanks for attending the Halloween quiz. Your final score is ${user_score}. Hope you liked it.`
+    display_score = user_score;
+    user_score = 0;
 
 }
 
@@ -86,7 +89,7 @@ async function get_questions(level, username, jumpscare_level){
         } else {
             let options_choosed;
             do {
-                options_choosed = prompt(`Your answer is incorrect. The correct answer was ${level[question]}. You have two options - 1) See a jumpscare o continue or 2) Quit here. Type 1 or 2 to choose.`);
+                options_choosed = prompt(`Your answer is incorrect. The correct answer was ${level[question]}. You have two options - 1) See a jumpscare to continue or 2) Quit here. Type 1 or 2 to choose.`);
                 if (options_choosed === null) {
                     options_choosed = "2";
                 }
