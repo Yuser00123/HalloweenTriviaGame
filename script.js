@@ -160,9 +160,11 @@ async function startGame(){
             }
         }
         if (saved.round <= 3) {
-            await get_questions(hard_questions, username, 3, saved.round === 3 ? saved.questionIndex : 0);
+            let finished = await get_questions(hard_questions, username, 3, saved.round === 3 ? saved.questionIndex : 0);
+            if (finished) {
+                quitGame(username);
+            }
         }
-        clearProgress();
         if (startButton) startButton.disabled = false;
         gameStarted = false;
         return;
@@ -185,7 +187,10 @@ async function startGame(){
     }
 
     alert("You survived the second round! Great job! Now the third and the last round, 5 hard questions.")
-    await get_questions(hard_questions, username, 3);
+    let finished = await get_questions(hard_questions, username, 3);
+    if (finished) {
+        quitGame(username);
+    }
     clearProgress();
     if (startButton) startButton.disabled = false;
     gameStarted = false;
